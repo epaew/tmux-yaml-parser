@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# vim:set ft=ruby:
+
+$:.unshift(File.join(File.dirname(__FILE__), '/../lib'))
+require 'tmux-erb-parser'
+
+cmd = TmuxERBParser::Command.new(ARGV)
+cmd.run
