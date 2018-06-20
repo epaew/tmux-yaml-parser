@@ -1,0 +1,47 @@
+---
+<% helpers = TmuxERBParser::Helpers %>
+- section: common settings
+  set:
+    - opts:
+        g:
+      defualt-shell: <%= ENV['SHELL'] %>
+      default-terminal: tmux-256color
+      <% if helpers.uname == "Darwin" %>
+      default-command: reattach-to-user-namespace -l zsh
+      <% end %>
+    - opts:
+        s:
+      escape-time: 0
+  setenv:
+    - opts:
+        g:
+      TMUX_VERSION: <%= helpers.tmux_version %>
+
+- section: key bindings
+  bind:
+    - C-r: source ${HOME}/.tmux.conf\; display-message "Reload Config."
+    - .: display-panes
+
+- <% if helpers.tmux_version <= 1.8 %>
+  unbind:
+    - opts:
+        t: vi-copy
+      Enter:
+  bind:
+    - opts:
+        t: vi-copy
+      v: begin-selection
+      y: copy-pipe "reattach-to-user-namespace pbcopy"
+      Enter: copy-pipe "reattach-to-user-namespace pbcopy"
+  <% else %>
+  bind:
+    - opts:
+        c: "#{pane_current_path}"
+      c: new-window
+    - opts:
+        hc: "#{pane_current_path}"
+      '%': split-window
+    - opts:
+        vc: "#{pane_current_path}"
+      '"': split-window
+  <% end %>
