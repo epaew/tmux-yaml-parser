@@ -24,14 +24,24 @@ module TmuxERBParser
     private
 
     def process
-      # TODO
+      raise ArgumentError.new "INPUT_ERB_FILES are required." if @args.empty?
+      unless @options[:inline] ^ @options[:output]
+        raise ArgumentError.new "Please specify either --inline or --output option."
+      end
+
+      args = @args.dup
+      args.each do |arg|
+        @logger.info "open #{arg}."
+        File.open(arg, "r") do |input|
+          # TODO
+        end
+      end
     end
 
     def set_opts(opts)
       opts.banner = "Usage: #{@command_name} INPUT_FILES [options]"
 
       opts.on('-i', '--inline', 'Exec tmux subcommands to the current tmux-server.') do
-        raise 'this option is currently unsupported.'
         @options[:inline] = true
       end
 
@@ -40,7 +50,6 @@ module TmuxERBParser
               String,
               'Output the configuration to a file with the specified name.'\
               ' If the file name is omitted, output to stdout') do |fname|
-        raise 'this option is currently unsupported.'
         @options[:output] = File.open(fname, "w") if fname
         @options[:output] ||= $stdout
       end
