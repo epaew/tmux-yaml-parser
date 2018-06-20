@@ -33,7 +33,11 @@ module TmuxERBParser
       args.each do |arg|
         @logger.info "open #{arg}."
         File.open(arg, "r") do |input|
-          # TODO
+          p = Parser.new(input,
+                         @options[:output],
+                         File.extname(arg.downcase)[1..-1].to_sym,
+                         @options)
+          p.parse
         end
       end
     end
