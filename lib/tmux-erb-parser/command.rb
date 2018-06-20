@@ -6,6 +6,7 @@ module TmuxERBParser
       @command_name = File.basename($0)
       @args         = args.empty? ? ["--help"] : args
       @options      = {}
+      @logger       = Logger.instance
     end
 
     def run
@@ -16,6 +17,7 @@ module TmuxERBParser
     rescue => e
       err_msg = "#{e.message}\n#{e.backtrace.join("\n\t")}"
       STDERR.puts err_msg unless @options[:quiet]
+      @logger.error err_msg
       exit 1
     end
 
