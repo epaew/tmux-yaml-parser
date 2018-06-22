@@ -72,10 +72,22 @@ module TmuxERBParser
       return '' if str.empty? || str.lstrip.start_with?('#')
 
       # strip comment at end of line
-      str = str.split('#').inject do |result, substr|
-        # TODO: need test.
-        result << '#' << substr if result.gsub(/'.*'|".*"/, '').match(/['"]/)
-        result
+      flags = {}
+      str = str.each_char.inject('') do |result, char|
+        case char
+        when '\''
+          if !flags[:double] || (flags[:single] && result[-1] != '\\')
+            flags[:single] = !flags[:single]
+          end
+        when '"'
+          if !flags[:single] || (flags[:double] && result[-1] != '\\')
+            flags[:double] = !flags[:double]
+          end
+        when '#'
+          break result if flags.values.none?
+        end
+
+        result << char
       end
       str.rstrip
     end
