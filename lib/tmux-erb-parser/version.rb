@@ -1,3 +1,3 @@
 module TmuxERBParser
-  VERSION = 'alpha'
+  VERSION = '0.1.0'
 end

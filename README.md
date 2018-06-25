@@ -1,5 +1,5 @@
-# Tmux ERB Parser (ver. alpha)
-A plugin to load tmux.conf.erb  
+# Tmux ERB Parser
+A Tmux plugin to load tmux.conf.erb  
 [What's ERB?](https://ruby-doc.org/stdlib-2.5.1/libdoc/erb/rdoc/ERB.html)
 
 ## Requirements
@@ -20,7 +20,7 @@ A plugin to load tmux.conf.erb
 ### Install with tpm (Tmux Plugin Manager)
 * Put this at the bottom of `~/.tmux.conf` (**Not your tmux.conf.erb !**):
     ```tmux
-    setenv -g TMUX_CONF_EXT_PATH path/to/tmux.conf.erb # set your tmux.conf.erb's path
+    setenv -g TMUX_CONF_EXT_PATH "path/to/tmux.conf.erb" # set your tmux.conf.erb's path
     # Note: You can specify multiple files using glob expressions. This is parsed by bash.
 
     set -g @plugin 'epaew/tmux-erb-parser'
