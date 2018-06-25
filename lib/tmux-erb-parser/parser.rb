@@ -3,6 +3,8 @@ require 'json'
 require 'yaml'
 
 module TmuxERBParser
+  PARSER_CMD = File.expand_path("../../../bin/tmux-erb-parser", __FILE__)
+
   class ParseError < StandardError; end
 
   class Parser
@@ -23,19 +25,32 @@ module TmuxERBParser
     def convert(input, type)
       erb_result = ERB.new(input.read).result
 
-      case type
-      when :erb
-        erb_result
-          .gsub(/([\r\n(\r\n)]){3,}/) { $1 * 2 }  # reduce continuity blanklines
-          .gsub(/([\r\n(\r\n)])+\z/) { $1 }       # remove blankline at last
-          .each_line
-          .map(&:chomp)
-      when :json
-        generate_conf(JSON::load(erb_result))
-      when :yml, :yaml
-        generate_conf(YAML::load_stream(erb_result))
-      else
-        ArgumentError.new "For INPUT_ERB_FILES only .erb/.json/.yaml are allowed."
+      plain =  case type
+               when :json
+                 generate_conf(JSON::load(erb_result))
+               when :yml, :yaml
+                 generate_conf(YAML::load_stream(erb_result))
+               else
+                 erb_result
+                   .gsub(/([\r\n(\r\n)]){3,}/) { $1 * 2 }  # reduce continuity blanklines
+                   .gsub(/([\r\n(\r\n)])+\z/) { $1 }       # remove blankline at last
+                   .each_line
+                   .map(&:chomp)
+               end
+
+      plain.map do |line|
+        lstriped = line.lstrip
+
+        # source file -> run-shell "parser --inline file"
+        if lstriped =~ /source/ && !(lstriped =~ /run(-shell)?/)
+          line.gsub!(/"source(-file)?( -q)?\s([^\s\\]+)"/) {
+            %("run-shell \\"#{PARSER_CMD} --inline #{$3}\\"")
+          }
+          line.gsub!(/source(-file)?( -q)?\s([^\s\\]+)/) {
+            %(run-shell "#{PARSER_CMD} --inline #{$3}")
+          }
+        end
+        line
       end
     end
 
@@ -55,7 +70,7 @@ module TmuxERBParser
       if buf.end_with?('\\')
         buf.chop!
       else
-        command = "tmux #{buf}"
+        command = "tmux #{buf.gsub(%(\\;), %( '\\;'))}"
         @logger.debug "exec: #{command}"
 
         `#{command}` unless ENV['DEBUG']
