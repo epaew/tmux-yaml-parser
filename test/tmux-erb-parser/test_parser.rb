@@ -4,8 +4,12 @@ require 'test_helper'
 
 module TmuxERBParser
   class TestParser < MyTestCase
-    sub_test_case '#parse' do
+    sub_test_case '#parse' do # rubocop:disable Metrics/BlockLength
       setup do
+        ENV['SHELL'] = '/usr/bin/zsh'
+        stub(Parser).tmux_version { 2.6 }
+        stub(Parser).uname { 'Linux' }
+
         @input = File.open(input_file_path, 'r')
         @output = StringIO.new
         @expected = File.readlines(
