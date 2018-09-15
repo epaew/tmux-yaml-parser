@@ -4,7 +4,7 @@ require 'optparse'
 
 module TmuxERBParser
   class Command
-    def initialize(args)
+    def initialize(args = [])
       @command_name = File.basename($PROGRAM_NAME)
       @args         = args.empty? ? ['--help'] : args
       @options      = {}
@@ -18,7 +18,7 @@ module TmuxERBParser
       exit 0
     rescue StandardError => e
       err_msg = "#{e.message}\n#{e.backtrace.join("\n\t")}"
-      STDERR.puts err_msg unless @options[:quiet]
+      warn err_msg unless @options[:quiet]
       @logger.error err_msg
       exit 1
     end
