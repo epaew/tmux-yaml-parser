@@ -20,7 +20,7 @@ A Tmux plugin to load tmux.conf.erb
 2. Install tmux-erb-parser and run tmux!
 
 ### Install with tpm (Tmux Plugin Manager)
-* Put this at the bottom of `~/.tmux.conf` (**Not your tmux.conf.erb !**):
+* Put this at the bottom of `~/.tmux.conf` (**Not your tmux.conf.erb!**):
     ```tmux
     setenv -g TMUX_CONF_EXT_PATH "path/to/tmux.conf.erb" # set your tmux.conf.erb's path
     # Note: You can specify multiple files using glob expressions. This is parsed by bash.
@@ -35,16 +35,21 @@ A Tmux plugin to load tmux.conf.erb
 
 * Run tmux and press `Prefix + I` to install plugins!
 
-### Install and configure with git
+### Install and configure with git/rubygems
 * Install:
-    ```bash
-    git clone https://github.com/epaew/tmux-erb-parser ~/.tmux/plugins/tmux-erb-parser
-    ```
+    * with git:
+        ```bash
+        git clone https://github.com/epaew/tmux-erb-parser ~/.tmux/plugins/tmux-erb-parser
+        ```
+    * from rubygems:
+        ```bash
+        gem install tmux-erb-parser
+        ```
 
 * Configure:
-    * Put this in `~/.tmux.conf`:
+    * Put this in `~/.tmux.conf` (**Not your tmux.conf.erb!**):
     ```tmux
-    run '~/.tmux/plugins/tmux-erb-parser/bin/tmux-erb-parser --inline path/to/tmux.conf.erb'
+    run 'path/to/tmux-erb-parser --inline path/to/tmux.conf.erb'
     ```
 
 ## License
