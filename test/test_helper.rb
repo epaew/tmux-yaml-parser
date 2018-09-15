@@ -26,5 +26,9 @@ module TmuxERBParser
     def log_file_path
       File.expand_path("log/#{File.basename($PROGRAM_NAME)}.log", __dir__)
     end
+
+    def input_file_path
+      File.expand_path('fixtures/sample.tmux.conf.erb', __dir__)
+    end
   end
 end
