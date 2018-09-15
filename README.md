@@ -1,4 +1,6 @@
 # Tmux ERB Parser
+[![Build Status](https://travis-ci.org/epaew/tmux-erb-parser.svg?branch=master)](https://travis-ci.org/epaew/tmux-erb-parser)
+
 A Tmux plugin to load tmux.conf.erb  
 [What's ERB?](https://ruby-doc.org/stdlib-2.5.1/libdoc/erb/rdoc/ERB.html)
 
