@@ -5,7 +5,7 @@ require 'simplecov-console'
 require 'test/unit'
 require 'test/unit/rr'
 
-SimpleCov.formatter = SimpleCov::Formatter::Console
+SimpleCov.formatter = SimpleCov::Formatter::Console if ENV['CI']
 SimpleCov.start { add_filter '/test/' }
 
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
@@ -24,8 +24,7 @@ module TmuxERBParser
     private
 
     def log_file_path
-      File.join(File.dirname(__dir__),
-                "log/#{File.basename($PROGRAM_NAME)}.log")
+      File.expand_path("log/#{File.basename($PROGRAM_NAME)}.log", __dir__)
     end
   end
 end
