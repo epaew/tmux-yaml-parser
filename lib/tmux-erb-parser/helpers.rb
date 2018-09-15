@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TmuxERBParser
   module Helpers
     def prefix_key
@@ -6,7 +8,7 @@ module TmuxERBParser
     module_function :prefix_key
 
     def server_started?
-      ! ENV['TMUX'].nil?
+      !ENV['TMUX'].nil?
     end
     module_function :server_started?
 

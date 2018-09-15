@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'erb'
 require 'json'
 require 'yaml'
 
 module TmuxERBParser
-  PARSER_CMD = File.expand_path("../../../bin/tmux-erb-parser", __FILE__)
+  PARSER_CMD = File.expand_path('../../bin/tmux-erb-parser', __dir__)
 
   class ParseError < StandardError; end
 
@@ -27,13 +29,13 @@ module TmuxERBParser
 
       plain =  case type
                when :json
-                 generate_conf(JSON::load(erb_result))
+                 generate_conf(JSON.load(erb_result))
                when :yml, :yaml
-                 generate_conf(YAML::load_stream(erb_result))
+                 generate_conf(YAML.load_stream(erb_result))
                else
                  erb_result
-                   .gsub(/([\r\n(\r\n)]){3,}/) { $1 * 2 }  # reduce continuity blanklines
-                   .gsub(/([\r\n(\r\n)])+\z/) { $1 }       # remove blankline at last
+                   .gsub(/([\r\n(\r\n)]){3,}/) { Regexp.last_match(1) * 2 }  # reduce continuity blanklines
+                   .gsub(/([\r\n(\r\n)])+\z/) { Regexp.last_match(1) }       # remove blankline at last
                    .each_line
                    .map(&:chomp)
                end
@@ -42,13 +44,13 @@ module TmuxERBParser
         lstriped = line.lstrip
 
         # source file -> run-shell "parser --inline file"
-        if lstriped =~ /source/ && !(lstriped =~ /run(-shell)?/)
-          line.gsub!(/"source(-file)?( -q)?\s([^\s\\]+)"/) {
-            %("run-shell \\"#{PARSER_CMD} --inline #{$3}\\"")
-          }
-          line.gsub!(/source(-file)?( -q)?\s([^\s\\]+)/) {
-            %(run-shell "#{PARSER_CMD} --inline #{$3}")
-          }
+        if lstriped =~ /source/ && lstriped !~ /run(-shell)?/
+          line.gsub!(/"source(-file)?( -q)?\s([^\s\\]+)"/) do
+            %("run-shell \\"#{PARSER_CMD} --inline #{Regexp.last_match(3)}\\"")
+          end
+          line.gsub!(/source(-file)?( -q)?\s([^\s\\]+)/) do
+            %(run-shell "#{PARSER_CMD} --inline #{Regexp.last_match(3)}")
+          end
         end
         line
       end
@@ -58,7 +60,7 @@ module TmuxERBParser
       if output
         commands.each(&output.method(:puts))
       else
-        commands.inject("") { |result, line| exec_tmux(result, line) }
+        commands.inject('') { |result, line| exec_tmux(result, line) }
       end
     end
 
@@ -78,7 +80,7 @@ module TmuxERBParser
       end
     end
 
-    def generate_conf(structured)
+    def generate_conf(_structured)
       # TODO
       parse_result = []
     end

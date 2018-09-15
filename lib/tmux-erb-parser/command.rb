@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'optparse'
 
 module TmuxERBParser
   class Command
     def initialize(args)
-      @command_name = File.basename($0)
-      @args         = args.empty? ? ["--help"] : args
+      @command_name = File.basename($PROGRAM_NAME)
+      @args         = args.empty? ? ['--help'] : args
       @options      = {}
       @logger       = Logger.instance
     end
@@ -14,7 +16,7 @@ module TmuxERBParser
       @option_parser.parse!(@args)
       process
       exit 0
-    rescue => e
+    rescue StandardError => e
       err_msg = "#{e.message}\n#{e.backtrace.join("\n\t")}"
       STDERR.puts err_msg unless @options[:quiet]
       @logger.error err_msg
@@ -24,15 +26,15 @@ module TmuxERBParser
     private
 
     def process
-      raise ArgumentError.new "INPUT_ERB_FILES are required." if @args.empty?
+      raise ArgumentError, 'INPUT_ERB_FILES are required.' if @args.empty?
       unless @options[:inline] ^ @options[:output]
-        raise ArgumentError.new "Please specify either --inline or --output option."
+        raise ArgumentError, 'Please specify either --inline or --output option.'
       end
 
       args = @args.dup
       args.each do |arg|
         @logger.info "open #{arg}."
-        File.open(arg, "r") do |input|
+        File.open(arg, 'r') do |input|
           p = Parser.new(input,
                          @options[:output],
                          File.extname(arg.downcase)[1..-1].to_sym,
@@ -54,7 +56,7 @@ module TmuxERBParser
               String,
               'Output the configuration to a file with the specified name.'\
               ' If the file name is omitted, output to stdout') do |fname|
-        @options[:output] = File.open(fname, "w") if fname
+        @options[:output] = File.open(fname, 'w') if fname
         @options[:output] ||= $stdout
       end
 
