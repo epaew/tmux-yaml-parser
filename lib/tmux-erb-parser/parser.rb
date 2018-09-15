@@ -19,39 +19,23 @@ module TmuxERBParser
     end
 
     def parse
-      exec(convert(@input, @type), @output)
+      conf_lines = parse_file(@input, @type)
+      converted_lines = conf_lines.map(&method(:replace_source_file))
+      exec(converted_lines, @output)
     end
 
     private
-
-    def convert(input, type)
-      plain = parse_file(input, type)
-
-      plain.map do |line|
-        lstriped = line.lstrip
-
-        # source file -> run-shell "parser --inline file"
-        if lstriped =~ /source/ && lstriped !~ /run(-shell)?/
-          line.gsub!(/"source(-file)?( -q)?\s([^\s\\]+)"/) do
-            %("run-shell \\"#{PARSER_CMD} --inline #{Regexp.last_match(3)}\\"")
-          end
-          line.gsub!(/source(-file)?( -q)?\s([^\s\\]+)/) do
-            %(run-shell "#{PARSER_CMD} --inline #{Regexp.last_match(3)}")
-          end
-        end
-        line
-      end
-    end
 
     def exec(commands, output = nil)
       if output
         commands.each(&output.method(:puts))
       else
-        commands.inject('') { |result, line| exec_tmux(result, line) }
+        commands.inject(+'', &method(:exec_tmux))
       end
     end
 
     def exec_tmux(buf, line)
+      buf = +buf if buf.frozen?
       buf << line
       buf = strip_comments(buf)
       return buf if buf.empty?
@@ -91,6 +75,19 @@ module TmuxERBParser
       end
     end
 
+    def replace_source_file(line)
+      # source file -> run-shell "parser --inline file"
+      if line =~ /source/ && line !~ /run(-shell)?/
+        line = line.gsub(/"source(-file)?( -q)?\s([^\s\\;]+)"/) do
+          %("run-shell \\"#{PARSER_CMD} --inline #{Regexp.last_match(3)}\\"")
+        end
+        line = line.gsub(/source(-file)?( -q)?\s([^\s\\;]+)/) do
+          %(run-shell "#{PARSER_CMD} --inline #{Regexp.last_match(3)}")
+        end
+      end
+      line
+    end
+
     def strip_comments(str)
       return '' if str.empty? || str.lstrip.start_with?('#')
 
@@ -100,7 +97,7 @@ module TmuxERBParser
     # TODO: refactoring
     def strip_eol_comments(str)
       flags = {}
-      str = str.each_char.inject('') do |result, char|
+      str = str.each_char.inject(+'') do |result, char|
         case char
         when '\''
           if !flags[:double] || (flags[:single] && result[-1] != '\\')
