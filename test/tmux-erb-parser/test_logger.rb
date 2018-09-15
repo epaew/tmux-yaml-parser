@@ -3,11 +3,7 @@
 require 'test_helper'
 
 module TmuxERBParser
-  class TestLogger < Test::Unit::TestCase
-    teardown do
-      File.delete(log_file_path) if File.exist?(log_file_path)
-    end
-
+  class TestLogger < MyTestCase
     sub_test_case 'log file existence' do
       def test_log_file_presence
         Logger.send(:new)
@@ -27,13 +23,6 @@ module TmuxERBParser
         logger = Logger.send(:new)
         assert_equal(logger.level, ::Logger::DEBUG)
       end
-    end
-
-    private
-
-    def log_file_path
-      File.join(File.dirname(__dir__),
-                "../log/#{File.basename($PROGRAM_NAME)}.log")
     end
   end
 end
