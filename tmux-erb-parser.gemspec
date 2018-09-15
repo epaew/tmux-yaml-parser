@@ -39,6 +39,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'simplecov-console'
   spec.add_development_dependency 'test-unit', '~> 3.2.8'
   spec.add_development_dependency 'test-unit-rr', '~> 1.0.5'
 end
