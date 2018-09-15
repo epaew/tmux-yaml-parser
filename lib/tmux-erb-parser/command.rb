@@ -12,7 +12,7 @@ module TmuxERBParser
     end
 
     def run
-      @option_parser = OptionParser.new(&method(:set_opts))
+      @option_parser = OptionParser.new(&method(:command_opts))
       @option_parser.parse!(@args)
       process
       exit 0
@@ -25,11 +25,17 @@ module TmuxERBParser
 
     private
 
-    def process
-      raise ArgumentError, 'INPUT_ERB_FILES are required.' if @args.empty?
+    def check_args
+      msg = 'INPUT_ERB_FILES are required.' if @args.empty?
       unless @options[:inline] ^ @options[:output]
-        raise ArgumentError, 'Please specify either --inline or --output option.'
+        msg = 'Please specify either --inline or --output option.'
       end
+
+      raise ArgumentError, msg if msg
+    end
+
+    def process
+      check_args
 
       args = @args.dup
       args.each do |arg|
@@ -44,10 +50,12 @@ module TmuxERBParser
       end
     end
 
-    def set_opts(opts)
+    def command_opts(opts) # rubocop:disable Metrics/MethodLength
       opts.banner = "Usage: #{@command_name} INPUT_FILES [options]"
 
-      opts.on('-i', '--inline', 'Exec tmux subcommands to the current tmux-server.') do
+      opts.on('-i',
+              '--inline',
+              'Exec tmux subcommands to the current tmux-server.') do
         @options[:inline] = true
       end
 

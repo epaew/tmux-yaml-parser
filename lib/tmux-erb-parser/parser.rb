@@ -25,20 +25,7 @@ module TmuxERBParser
     private
 
     def convert(input, type)
-      erb_result = ERB.new(input.read).result
-
-      plain =  case type
-               when :json
-                 generate_conf(JSON.load(erb_result))
-               when :yml, :yaml
-                 generate_conf(YAML.load_stream(erb_result))
-               else
-                 erb_result
-                   .gsub(/([\r\n(\r\n)]){3,}/) { Regexp.last_match(1) * 2 }  # reduce continuity blanklines
-                   .gsub(/([\r\n(\r\n)])+\z/) { Regexp.last_match(1) }       # remove blankline at last
-                   .each_line
-                   .map(&:chomp)
-               end
+      plain = parse_file(input, type)
 
       plain.map do |line|
         lstriped = line.lstrip
@@ -85,10 +72,33 @@ module TmuxERBParser
       parse_result = []
     end
 
+    def parse_file(input, type)
+      erb_result = ERB.new(input.read).result
+
+      case type
+      when :json
+        generate_conf(JSON.parse(erb_result))
+      when :yml, :yaml
+        generate_conf(YAML.load_stream(erb_result))
+      else
+        # rubocop:disable Metrics/LineLength
+        erb_result
+          .gsub(/(\R){3,}/) { Regexp.last_match(1) * 2 } # reduce continuity blanklines
+          .gsub(/(\R)+\z/) { Regexp.last_match(1) }      # remove blankline at EOF
+          .each_line
+          .map(&:chomp)
+        # rubocop:enable Metrics/LineLength
+      end
+    end
+
     def strip_comments(str)
       return '' if str.empty? || str.lstrip.start_with?('#')
 
-      # strip comment at end of line
+      strip_eol_comments(str)
+    end
+
+    # TODO: refactoring
+    def strip_eol_comments(str)
       flags = {}
       str = str.each_char.inject('') do |result, char|
         case char

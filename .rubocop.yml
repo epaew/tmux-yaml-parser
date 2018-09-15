@@ -1,4 +1,12 @@
 AllCops:
   TargetRubyVersion: 2.3
+  Exclude:
+    - 'tmux-erb-parser.gemspec'
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented_relative_to_receiver
+Metrics/MethodLength:
+  Max: 15
+Naming/FileName:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
