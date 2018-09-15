@@ -10,8 +10,8 @@ module TmuxERBParser
     end
 
     def run
-      @opts = OptionParser.new(&method(:set_opts))
-      @opts.parse!(@args)
+      @option_parser = OptionParser.new(&method(:set_opts))
+      @option_parser.parse!(@args)
       process
       exit 0
     rescue => e
