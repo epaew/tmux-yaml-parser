@@ -49,7 +49,7 @@ A Tmux plugin to load tmux.conf.erb
 * Configure:
     * Put this in `~/.tmux.conf` (**Not your tmux.conf.erb!**):
     ```tmux
-    run 'path/to/tmux-erb-parser --inline path/to/tmux.conf.erb'
+    run 'path/to/bin/tmux-erb-parser --inline path/to/tmux.conf.erb'
     ```
 
 ## License
