@@ -10,54 +10,33 @@ module TmuxERBParser
   class ParseError < StandardError; end
 
   class Parser
-    def initialize(input, output, type = :erb, options = {})
-      @input = input
-      @output = output
+    def initialize(input, type = :erb)
+      @input = case input
+               when IO     then input.read
+               when Array  then input.join('\n')
+               when String then input
+               else raise ArgumentError
+               end
       @type = type
-      @options = options
-      @logger = Logger.instance
     end
 
-    def parse
-      conf_lines = parse_file(@input, @type)
-      converted_lines = conf_lines.map(&method(:replace_source_file))
-      exec(converted_lines, @output)
+    def parse(strip_comments = false)
+      parse_string(@input, @type).map do |line|
+        line = replace_source_file(line)
+        line = strip_comment(line) if strip_comments
+        line
+      end
     end
 
     private
-
-    def exec(commands, output = nil)
-      if output
-        commands.each(&output.method(:puts))
-      else
-        commands.inject(+'', &method(:exec_tmux))
-      end
-    end
-
-    def exec_tmux(buf, line)
-      buf = +buf if buf.frozen?
-      buf << line
-      buf = strip_comments(buf)
-      return buf if buf.empty?
-
-      if buf.end_with?('\\')
-        buf.chop!
-      else
-        command = "tmux #{buf.gsub(%(\\;), %( '\\;'))}"
-        @logger.debug "exec: #{command}"
-
-        `#{command}` unless ENV['DEBUG']
-        buf.clear
-      end
-    end
 
     def generate_conf(_structured)
       # TODO
       parse_result = []
     end
 
-    def parse_file(input, type)
-      erb_result = ERB.new(input.read).result
+    def parse_string(input, type)
+      erb_result = ERB.new(input).result
 
       case type
       when :json
@@ -88,32 +67,35 @@ module TmuxERBParser
       line
     end
 
-    def strip_comments(str)
+    def strip_comment(str)
       return '' if str.empty? || str.lstrip.start_with?('#')
 
-      strip_eol_comments(str)
+      strip_eol_comment(str)
     end
 
-    # TODO: refactoring
-    def strip_eol_comments(str)
+    def strip_eol_comment(str)
       flags = {}
       str = str.each_char.inject(+'') do |result, char|
-        case char
-        when '\''
-          if !flags[:double] || (flags[:single] && result[-1] != '\\')
-            flags[:single] = !flags[:single]
-          end
-        when '"'
-          if !flags[:single] || (flags[:double] && result[-1] != '\\')
-            flags[:double] = !flags[:double]
-          end
-        when '#'
-          break result if flags.values.none?
-        end
+        flags = update_flags(flags, char)
+        break result if char == '#' && flags.values.none?
 
         result << char
       end
       str.rstrip
+    end
+
+    def update_flags(current_flags, char)
+      result = current_flags.dup
+      result.delete(:'\\')
+
+      case char
+      when '\\'
+        result[char.to_sym] = !current_flags[char.to_sym]
+      when '\'', '"'
+        result[char.to_sym] =
+          current_flags.delete(char.to_sym) ^ current_flags.values.none?
+      end
+      result
     end
   end
 end

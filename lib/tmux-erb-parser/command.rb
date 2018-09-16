@@ -34,22 +34,6 @@ module TmuxERBParser
       raise ArgumentError, msg if msg
     end
 
-    def process
-      check_args
-
-      args = @args.dup
-      args.each do |arg|
-        @logger.info "open #{arg}."
-        File.open(arg, 'r') do |input|
-          p = Parser.new(input,
-                         @options[:output],
-                         File.extname(arg.downcase)[1..-1].to_sym,
-                         @options)
-          p.parse
-        end
-      end
-    end
-
     def command_opts(opts) # rubocop:disable Metrics/MethodLength
       opts.banner = "Usage: #{@command_name} INPUT_FILES [options]"
 
@@ -76,6 +60,42 @@ module TmuxERBParser
       opts.on('-v', '--version', 'Print version information') do
         puts "#{@command_name} #{TmuxERBParser::VERSION}"
         exit
+      end
+    end
+
+    def exec(commands, output = nil)
+      if output
+        commands.each(&output.method(:puts))
+      else
+        commands.inject(+'', &method(:exec_tmux))
+      end
+    end
+
+    def exec_tmux(buf, line)
+      buf << line
+      return buf if buf.empty?
+
+      if buf.end_with?('\\')
+        buf.chop!
+      else
+        command = "tmux #{buf.gsub(%(\\;), %( '\\;'))}"
+        @logger.debug "exec: #{command}"
+
+        `#{command}` unless ENV['DEBUG']
+        +''
+      end
+    end
+
+    def process
+      check_args
+
+      @args.each do |arg|
+        @logger.info "open #{arg}."
+        File.open(arg, 'r') do |input|
+          p = Parser.new(input, File.extname(arg.downcase)[1..-1].to_sym)
+          commands = p.parse(@options[:output].nil?)
+          exec(commands, @options[:output])
+        end
       end
     end
   end

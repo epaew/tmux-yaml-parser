@@ -5,7 +5,11 @@ require 'test_helper'
 module TmuxERBParser
   class TestCommand < MyTestCase
     setup do
-      stub.instance_of(Parser).parse { true }
+      ENV['DEBUG'] = 'true'
+      ENV['SHELL'] = '/usr/bin/zsh'
+      stub(Parser).tmux_version { 2.6 }
+      stub(Parser).uname { 'Linux' }
+
       $stdout = @stdout = StringIO.new
       $stderr = @stderr = StringIO.new
     end
@@ -52,11 +56,21 @@ module TmuxERBParser
     end
 
     sub_test_case 'run with valid arguments' do
+      setup do
+        @expected = File.readlines(
+          File.expand_path('../fixtures/sample.tmux.conf.result', __dir__)
+        )
+      end
+
       def test_run_filename_and_inline
         e = assert_raise(SystemExit) do
           run_command([input_file_path, '--inline'])
         end
         assert_true(e.success?)
+        @stdout.each_line.with_index do |line, index|
+          striped = parser.send(:strip_comments, @expected[index])
+          assert_equal(line, "exec: #{striped}")
+        end
       end
 
       def test_run_filename_and_stdout
@@ -64,6 +78,9 @@ module TmuxERBParser
           run_command([input_file_path, '--output'])
         end
         assert_true(e.success?)
+        @stdout.each_line.with_index do |line, index|
+          assert_equal(line, @expected[index])
+        end
       end
     end
 
@@ -71,6 +88,9 @@ module TmuxERBParser
 
     def run_command(args = [])
       @command = Command.new(args)
+      if defined?(@output)
+        @command.instance_variable_set(:@logger, ::Logger.new(@output))
+      end
       @command.run
     end
   end
