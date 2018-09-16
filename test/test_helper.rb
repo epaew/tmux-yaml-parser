@@ -8,7 +8,7 @@ require 'test/unit/rr'
 SimpleCov.formatter = SimpleCov::Formatter::Console if ENV['CI']
 SimpleCov.start { add_filter '/test/' }
 
-$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'bundler/setup'
 require 'tmux-erb-parser'
 
 module TmuxERBParser
