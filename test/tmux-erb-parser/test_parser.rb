@@ -10,13 +10,21 @@ module TmuxERBParser
       @patterns = YAML.safe_load(
         ERB.new(
           IO.read(File.expand_path('../fixtures/patterns.yml', __dir__))
-        ).result
+        ).result,
+        symbolize_names: true
       )
+
+      if RUBY_VERSION.to_f < 2.5
+        @patterns.map! do |pattern|
+          pattern.each.with_object({}) do |(key, value), result|
+            result[key.to_sym] = value
+          end
+        end
+      end
     end
 
     def test_parse
       @patterns.each do |pattern|
-        pattern = pattern.transform_keys(&:to_sym)
         assert_equal(
           subject(pattern[:before], pattern[:strip_comment]),
           [*pattern[:after]]
