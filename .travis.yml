@@ -4,4 +4,16 @@ rvm:
   - 2.3.7
   - 2.4.4
   - 2.5.1
-before_install: gem install bundler -v 1.16.3
+cache:
+  bundler: true
+
+# for codeclimate
+env:
+  global:
+    - CC_TEST_REPORTER_ID=518a2565046a8d3d996e3e6fc49eba88bb15cac99c883f83e5dbd8d3a3089bdd
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
