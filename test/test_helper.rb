@@ -32,11 +32,3 @@ module TmuxERBParser
     end
   end
 end
-
-if RUBY_VERSION.to_f < 2.5
-  class Hash
-    def transform_keys
-      each_key.with_object({}) { |key, result| result[yield(key)] = self[key] }
-    end
-  end
-end
