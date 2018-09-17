@@ -4,5 +4,10 @@
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'tmux-erb-parser'
 
+# limit recursive execution
+command = File.basename(__FILE__)
+processes = `ps ax`.each_line.map { |line| line.split(' ', 5)[4] }
+exit 1 if processes.grep(/\Aruby.+#{command}/).size > 5
+
 cmd = TmuxERBParser::Command.new(ARGV)
 cmd.run
