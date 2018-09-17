@@ -13,7 +13,7 @@ module TmuxERBParser
     def initialize(input, type = :erb)
       @input = case input
                when IO     then input.read
-               when Array  then input.join('\n')
+               when Array  then input.join("\n")
                when String then input
                else raise ArgumentError
                end

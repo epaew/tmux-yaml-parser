@@ -1,0 +1,44 @@
+---
+## for test replace_source_file
+- before: source ${HOME}/.tmux.conf
+  after: run-shell "<%= TmuxERBParser::PARSER_CMD %> --inline ${HOME}/.tmux.conf"
+  strip_comment: false
+- before: bind C-r source ${HOME}/.tmux.conf\; display-message "Reload Config."
+  after: bind C-r run-shell "<%= TmuxERBParser::PARSER_CMD %> --inline ${HOME}/.tmux.conf"\; display-message "Reload Config."
+  strip_comment: false
+- before: bind C-r "source-file ${HOME}/.tmux.conf"\; display-message "Reload Config."
+  after: bind C-r "run-shell \"<%= TmuxERBParser::PARSER_CMD %> --inline ${HOME}/.tmux.conf\""\; display-message "Reload Config."
+  strip_comment: false
+
+## for test strip_comment
+- before: '# test comment'
+  after: ''
+  strip_comment: true
+- before: 'bind C-t send-prefix # puts "C-t" twice, send "C-t"'
+  after: 'bind C-t send-prefix'
+  strip_comment: true
+- before: bind c new-window -c '#{pane_current_path}'
+  after: bind c new-window -c '#{pane_current_path}'
+  strip_comment: true
+- before: bind c new-window -c "#{pane_current_path}"
+  after: bind c new-window -c "#{pane_current_path}"
+  strip_comment: true
+# from "https://github.com/junegunn/dotfiles/blob/master/tmux.conf"
+- before:
+    - 'if-shell "test $USER = jg" \'
+    - '  "unbind C-a; set-option -g prefix \\ ; bind-key ] send-prefix; bind-key p paste-buffer; bind-key \\ last-window"'
+  after:
+    - 'if-shell "test $USER = jg" \'
+    - '  "unbind C-a; set-option -g prefix \\ ; bind-key ] send-prefix; bind-key p paste-buffer; bind-key \\ last-window"'
+  strip_comment: true
+- before:
+    - 'bind-key F10 set-option -g prefix "\\"  \;\'
+    - '             bind-key ] send-prefix     \;\'
+    - '             bind-key p paste-buffer    \;\'
+    - '             bind-key "\\" last-window'
+  after:
+    - 'bind-key F10 set-option -g prefix "\\"  \;\'
+    - '             bind-key ] send-prefix     \;\'
+    - '             bind-key p paste-buffer    \;\'
+    - '             bind-key "\\" last-window'
+  strip_comment: true
