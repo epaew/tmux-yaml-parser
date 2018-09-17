@@ -74,16 +74,13 @@ module TmuxERBParser
     def exec_tmux(buf, line)
       buf << line
       return buf if buf.empty?
+      return buf.chop! if buf.end_with?('\\')
 
-      if buf.end_with?('\\')
-        buf.chop!
-      else
-        command = "tmux #{buf.gsub(%(\\;), %( '\\;'))}"
-        @logger.debug "exec: #{command}"
+      command = "tmux #{buf.gsub(%(\\;), %( '\\;'))}"
+      @logger.debug "exec: #{command}"
 
-        `#{command}` unless ENV['DEBUG']
-        +''
-      end
+      `#{command}` unless ENV['DEBUG']
+      +''
     end
 
     def process
