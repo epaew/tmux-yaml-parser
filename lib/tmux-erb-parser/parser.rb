@@ -3,6 +3,7 @@
 require 'erb'
 require 'json'
 require 'yaml'
+require_relative 'helpers'
 
 module TmuxERBParser
   PARSER_CMD = File.expand_path('../../bin/tmux-erb-parser', __dir__)
@@ -36,7 +37,7 @@ module TmuxERBParser
     end
 
     def parse_string(input, type)
-      erb_result = ERB.new(input).result
+      erb_result = ERB.new(input).result(TmuxERBParser::Helpers.binding)
 
       case type
       when :json

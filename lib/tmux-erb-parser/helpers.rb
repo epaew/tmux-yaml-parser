@@ -4,6 +4,11 @@ module TmuxERBParser
   module Helpers
     module_function
 
+    def binding
+      # NOTE: Kernel.#binding is private
+      super
+    end
+
     def prefix_key
       `tmux show-option -g prefix`.split[1]
     end

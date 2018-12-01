@@ -1,5 +1,4 @@
 # vim:set ft=tmux:
-<% helpers = TmuxERBParser::Helpers %>
 set -g default-shell <%= ENV['SHELL'] %>
 set -g default-terminal "tmux-256color"
 set -s escape-time 0
@@ -14,7 +13,7 @@ setw -g pane-base-index 1
 # environments
 setenv -g FZF_TMUX 1
 
-<% if helpers.uname == "Darwin" %>
+<% if uname == "Darwin" %>
 # for macOS
 set -g default-command "reattach-to-user-namespace -l zsh"
 <% end %>
@@ -26,7 +25,7 @@ unbind C-b
 bind C-r source ${HOME}/.tmux.conf\; display-message "Reload Config."
 bind . display-panes
 
-<% if helpers.tmux_version <= 1.8 %>
+<% if tmux_version <= 1.8 %>
 unbind -t vi-copy Enter
 bind -t vi-copy v begin-selection
 bind -t vi-copy y copy-pipe "reattach-to-user-namespace pbcopy"
@@ -40,7 +39,7 @@ bind '"' split-window -vc "#{pane_current_path}"
 # status bar settings
 set -g status-left-length 50
 set -g status-left "#[bg=magenta] #h [s#S]\
-#{?client_prefix,#[reverse],} <<%= helpers.prefix_key %>> "
+#{?client_prefix,#[reverse],} <<%= prefix_key %>> "
 
 set -g status-right-length 25
 set -g status-right "#[bg=cyan] %Y-%m-%d %H:%M:%S "
