@@ -6,7 +6,7 @@ require 'tmux-erb-parser'
 
 # limit recursive execution
 command = File.basename(__FILE__)
-processes = `ps axo command`
+processes = `ps axo command`.each_line
 exit 1 if processes.grep(/\Aruby.+#{command}/).size > 5
 
 cmd = TmuxERBParser::Command.new(ARGV)
