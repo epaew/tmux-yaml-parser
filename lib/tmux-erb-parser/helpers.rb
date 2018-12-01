@@ -1,28 +1,32 @@
 # frozen_string_literal: true
 
 module TmuxERBParser
+  module Classifyable
+    refine String do
+      def classify
+        snake_case = File.basename(self, '.rb')
+        splitted = snake_case.split('_').map do |w|
+          w[0] = w[0].upcase
+          w
+        end
+        splitted.join
+      end
+    end
+  end
+
   module Helpers
-    module_function
+    using Classifyable
 
-    def binding
-      # NOTE: Kernel.#binding is private
-      super
+    Dir[File.expand_path('helpers/*.rb', __dir__)].each do |h|
+      require h
+      klass = const_get(h.classify)
+      self.class.class_eval do
+        prepend klass
+      end
     end
 
-    def prefix_key
-      `tmux show-option -g prefix`.split[1]
-    end
-
-    def server_started?
-      !ENV['TMUX'].nil?
-    end
-
-    def tmux_version
-      (ENV['TMUX_VERSION'] || `tmux -V`.split[1]).to_f
-    end
-
-    def uname
-      ENV['UNAME'] || `uname`.chomp
+    def self.binding
+      super # NOTE: Kernel.#binding is private
     end
   end
 end
