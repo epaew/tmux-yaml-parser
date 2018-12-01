@@ -19,7 +19,7 @@ module TmuxERBParser
         "\#{#{operator}:#{arg1},#{arg2}}"
       end
 
-      def format_if(cond, true_value, false_value)
+      def format_if(cond, true_value, false_value = nil)
         "\#{?#{cond},#{true_value},#{false_value}}"
       end
     end
