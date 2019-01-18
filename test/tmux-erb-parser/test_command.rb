@@ -82,6 +82,14 @@ module TmuxERBParser
           assert_equal(line, @expected[index])
         end
       end
+
+      def test_run_filename_and_stdout_from_shell
+        cmd = File.expand_path('../../bin/tmux-erb-parser', __dir__)
+        opts = '--output'
+
+        `#{cmd} #{input_file_path} #{opts}`
+        assert_true($?.success?)
+      end
     end
 
     private
