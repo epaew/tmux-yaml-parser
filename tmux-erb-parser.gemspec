@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.authors     = ['epaew']
   spec.email       = ['epaew.333@gmail.com']
-  spec.summary     = 'A Tmux plugin to load tmux.conf.erb'
+  spec.summary     = 'A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.'
   spec.description = spec.summary
   spec.homepage    = 'https://github.com/epaew/tmux-erb-parser'
   spec.license     = 'MIT'
