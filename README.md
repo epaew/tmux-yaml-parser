@@ -4,8 +4,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/a4c67b3c8ba8e555d98f/maintainability)](https://codeclimate.com/github/epaew/tmux-erb-parser/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a4c67b3c8ba8e555d98f/test_coverage)](https://codeclimate.com/github/epaew/tmux-erb-parser/test_coverage)
 
-A Tmux plugin to load tmux.conf.erb  
-[What's ERB?](https://ruby-doc.org/stdlib-2.5.1/libdoc/erb/rdoc/ERB.html)
+A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.  
+[What's eRuby?](https://ruby-doc.org/stdlib/libdoc/erb/rdoc/ERB.html)
 
 ## Requirements
 * bash
