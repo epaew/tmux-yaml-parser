@@ -20,10 +20,12 @@ A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.
 1. Create your `tmux.conf.erb` and place it.
     * By default, tmux-erb-parser loads all `*.erb` files in `~/.config/tmux/`
     * Or you can change the load path. (Please see below.)
+    * Sample configuration file: [sample.tmux.conf.erb](test/fixtures/sample.tmux.conf.erb)
 2. Install tmux-erb-parser and run tmux!
 
 ### Install with tpm (Tmux Plugin Manager)
-* Put this at the bottom of `~/.tmux.conf` (**Not your tmux.conf.erb!**):
+* [Install tpm](https://github.com/tmux-plugins/tpm#installation)
+* Put this at the bottom of `~/.tmux.conf` (`$XDG_CONFIG_HOME/tmux/tmux.conf` works too, **but not your tmux.conf.erb!**):
     ```tmux
     setenv -g TMUX_CONF_EXT_PATH "path/to/tmux.conf.erb" # set your tmux.conf.erb's path
     # Note: You can specify multiple files using glob expressions. This is parsed by bash.
@@ -33,7 +35,7 @@ A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.
     # and list other plugins you want to install
 
     # Initialize Tmux plugin manager (keep this line at the very bottom of tmux.conf)
-    run '~/.tmux/plugins/tpm/tpm'
+    run -b '~/.tmux/plugins/tpm/tpm'
     ```
 
 * Run tmux and press `Prefix + I` to install plugins!
@@ -50,10 +52,10 @@ A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.
         ```
 
 * Configure:
-    * Put this in `~/.tmux.conf` (**Not your tmux.conf.erb!**):
-    ```tmux
-    run 'path/to/bin/tmux-erb-parser --inline path/to/tmux.conf.erb'
-    ```
+    * Put this in `~/.tmux.conf` (`$XDG_CONFIG_HOME/tmux/tmux.conf` works too, **but not your tmux.conf.erb!**):
+        ```tmux
+        run -b 'path/to/bin/tmux-erb-parser --inline path/to/tmux.conf.erb'
+        ```
 
 ## License
 [MIT](LICENSE)
