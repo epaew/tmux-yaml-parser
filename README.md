@@ -13,7 +13,7 @@ A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.
     * You can use whatever you like as the default shell.
 * git
 * ruby:
-    * 2.4 or higher is required.
+    * 2.5 or higher is required.
 * tmux
 
 ## How to use
