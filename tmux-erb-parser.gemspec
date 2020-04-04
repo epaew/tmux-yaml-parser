@@ -7,7 +7,7 @@ require 'tmux-erb-parser/version'
 Gem::Specification.new do |spec|
   spec.name                  = 'tmux-erb-parser'
   spec.version               = TmuxERBParser::VERSION
-  spec.required_ruby_version = '>= 2.4.0'
+  spec.required_ruby_version = '>= 2.5.0'
   spec.requirements          = %w[bash tmux]
 
   spec.authors     = ['epaew']
@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'simplecov', '< 0.18'
   spec.add_development_dependency 'simplecov-console'
   spec.add_development_dependency 'test-unit', '~> 3.2'
   spec.add_development_dependency 'test-unit-rr', '~> 1.0'

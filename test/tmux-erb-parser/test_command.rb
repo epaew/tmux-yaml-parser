@@ -88,7 +88,7 @@ module TmuxERBParser
         opts = '--output'
 
         `#{cmd} #{input_file_path} #{opts}`
-        assert_true($?.success?)
+        assert_true($CHILD_STATUS.success?)
       end
     end
 

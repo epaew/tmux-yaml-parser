@@ -33,7 +33,7 @@ module TmuxERBParser
 
     def generate_conf(_structured)
       # TODO
-      parse_result = []
+      # parse_result = []
     end
 
     def parse_string(input, type)

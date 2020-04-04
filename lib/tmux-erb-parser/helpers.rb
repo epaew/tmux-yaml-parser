@@ -17,7 +17,7 @@ module TmuxERBParser
   module Helpers
     using Classifyable
 
-    Dir[File.expand_path('helpers/*.rb', __dir__)].each do |h|
+    Dir[File.expand_path('helpers/*.rb', __dir__)].sort.each do |h|
       require h
       klass = const_get(h.classify)
       self.class.class_eval do
