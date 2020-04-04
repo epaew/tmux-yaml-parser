@@ -1,6 +1,6 @@
 # Tmux ERB Parser
 [![Gem Version](https://badge.fury.io/rb/tmux-erb-parser.svg)](https://badge.fury.io/rb/tmux-erb-parser)
-[![Build Status](https://travis-ci.org/epaew/tmux-erb-parser.svg?branch=master)](https://travis-ci.org/epaew/tmux-erb-parser)
+[![Build Status](https://github.com/epaew/tmux-erb-parser/workflows/Run%20TestUnit/badge.svg)](https://github.com/epaew/tmux-erb-parser/actions?query=workflow%3A%22Run+TestUnit%22+branch%3A%22master%22)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a4c67b3c8ba8e555d98f/maintainability)](https://codeclimate.com/github/epaew/tmux-erb-parser/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a4c67b3c8ba8e555d98f/test_coverage)](https://codeclimate.com/github/epaew/tmux-erb-parser/test_coverage)
 
