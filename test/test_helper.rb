@@ -5,7 +5,7 @@ require 'simplecov-console'
 require 'test/unit'
 require 'test/unit/rr'
 
-SimpleCov.formatter = SimpleCov::Formatter::Console if ENV['GITHUB_ACTIONS']
+SimpleCov.formatter = SimpleCov::Formatter::Console
 SimpleCov.start { add_filter '/test/' }
 
 require 'bundler/setup'
