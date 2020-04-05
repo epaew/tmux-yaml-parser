@@ -35,6 +35,10 @@ module TmuxERBParser
     def parse_string(input, type)
       erb_result = ERB.new(input).result(TmuxERBParser::Helpers.binding)
 
+      parse_structure(erb_result, type)
+    end
+
+    def parse_structure(erb_result, type)
       case type
       when :json
         Converter.convert(JSON.parse(erb_result))
@@ -45,11 +49,9 @@ module TmuxERBParser
           Converter.convert(YAML.safe_load(erb_result, aliases: true))
         end
       else
-        # rubocop:disable Layout/LineLength
         erb_result
-          .gsub(/(\R){3,}/) { Regexp.last_match(1) * 2 } # reduce continuity blankline
+          .gsub(/(\R){3,}/) { Regexp.last_match(1) * 2 } # reduce continuity blankline # rubocop:disable Layout/LineLength
           .each_line(chomp: true)
-        # rubocop:enable Layout/LineLength
       end
     end
 

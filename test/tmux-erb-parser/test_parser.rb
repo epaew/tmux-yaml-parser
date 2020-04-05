@@ -22,8 +22,8 @@ module TmuxERBParser
           [*pattern[:after]],
           subject(
             pattern[:before],
-            pattern[:strip_comment],
-            pattern[:type]&.to_sym
+            type: pattern[:type]&.to_sym,
+            strip_comments: pattern[:strip_comments]
           )
         )
       end
@@ -31,8 +31,8 @@ module TmuxERBParser
 
     private
 
-    def subject(line, strip_comments = false, type = :erb)
-      @parser = Parser.new(line, type)
+    def subject(input, type:, strip_comments:)
+      @parser = Parser.new(input, type || :erb)
       @parser.parse(strip_comments)
     end
   end

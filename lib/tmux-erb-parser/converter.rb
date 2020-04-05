@@ -6,17 +6,19 @@ module TmuxERBParser
       def convert(structured)
         structured = [structured] if structured.is_a?(Hash)
 
-        structured.inject([]) do |result, hash|
-          result << '' unless result.empty?
-
-          comment = hash.is_a?(Hash) && hash.delete('comment')
-          result << "# #{comment}" if comment
-
-          result.concat([*convert_structured(hash)])
-        end
+        structured.inject([], &method(:convert_line))
       end
 
       private
+
+      def convert_line(result, line)
+        result << '' unless result.empty?
+
+        comment = line.is_a?(Hash) && line.delete('comment')
+        result << "# #{comment}" if comment
+
+        result.push(*convert_structured(line))
+      end
 
       def convert_hash(hash, prefix = [])
         converted = hash.map do |key, value|
