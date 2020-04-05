@@ -1,0 +1,67 @@
+---
+## for test single line conversion
+- before:
+  - set -g prefix C-t
+  after: set -g prefix C-t
+
+## for test comment conversion
+- before:
+  - comment: comment
+  after: '# comment'
+- before:
+  - comment: comment
+    set: -g prefix C-t
+    bind: C-t send-prefix
+  after:
+    - '# comment'
+    - set -g prefix C-t
+    - bind C-t send-prefix
+
+## for test single line of hash conversion
+- before:
+  - set: -g prefix C-t
+  after: set -g prefix C-t
+- before:
+  - set:
+      -g: prefix C-t
+  after: set -g prefix C-t
+- before:
+  - set:
+      -g:
+        prefix: C-t
+  after: set -g prefix C-t
+
+## for test two lines conversion
+- before:
+  - set -g prefix C-t
+  - bind C-t send-prefix
+  after:
+    - set -g prefix C-t
+    - ""
+    - bind C-t send-prefix
+
+## for test single line with array in hash conversion
+- before:
+  - set:
+      -g:
+        - default-terminal tmux-256color
+        - prefix C-t
+    bind: C-t send-prefix
+  after:
+    - set -g default-terminal tmux-256color
+    - set -g prefix C-t
+    - bind C-t send-prefix
+
+## for test array with hash key 'if-shell' conversion
+- before:
+  - set:
+      -g:
+        - default-terminal tmux-256color
+        - prefix C-t
+    if:
+      - 'test "${REMOTEHOST}${SSH_CONNECTION}"'
+      - 'set -g status-right ""'
+  after:
+    - set -g default-terminal tmux-256color
+    - set -g prefix C-t
+    - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""'

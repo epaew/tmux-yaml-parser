@@ -8,9 +8,10 @@ module TmuxERBParser
   class TestParser < MyTestCase
     setup do
       @patterns = YAML.safe_load(
-        ERB.new(
-          IO.read(File.expand_path('../fixtures/patterns.yml', __dir__))
-        ).result,
+        File
+          .expand_path('../fixtures/test_parser_patterns.yml', __dir__)
+          .yield_self { |file| IO.read(file) }
+          .yield_self { |string| ERB.new(string).result },
         symbolize_names: true
       )
     end
