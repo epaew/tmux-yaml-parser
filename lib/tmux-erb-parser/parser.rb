@@ -3,6 +3,7 @@
 require 'erb'
 require 'json'
 require 'yaml'
+require_relative 'converter'
 require_relative 'helpers'
 
 module TmuxERBParser
@@ -31,27 +32,24 @@ module TmuxERBParser
 
     private
 
-    def generate_conf(_structured)
-      # TODO
-      # parse_result = []
-    end
-
     def parse_string(input, type)
       erb_result = ERB.new(input).result(TmuxERBParser::Helpers.binding)
 
       case type
       when :json
-        generate_conf(JSON.parse(erb_result))
+        Converter.convert(JSON.parse(erb_result))
       when :yml, :yaml
-        generate_conf(YAML.load_stream(erb_result))
+        if RUBY_VERSION.to_f < 2.6
+          Converter.convert(YAML.safe_load(erb_result, [], [], true))
+        else
+          Converter.convert(YAML.safe_load(erb_result, aliases: true))
+        end
       else
-        # rubocop:disable Metrics/LineLength
+        # rubocop:disable Layout/LineLength
         erb_result
-          .gsub(/(\R){3,}/) { Regexp.last_match(1) * 2 } # reduce continuity blanklines
-          .gsub(/(\R)+\z/) { Regexp.last_match(1) }      # remove blankline at EOF
-          .each_line
-          .map(&:chomp)
-        # rubocop:enable Metrics/LineLength
+          .gsub(/(\R){3,}/) { Regexp.last_match(1) * 2 } # reduce continuity blankline
+          .each_line(chomp: true)
+        # rubocop:enable Layout/LineLength
       end
     end
 
