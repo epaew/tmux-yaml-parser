@@ -4,6 +4,8 @@ module TmuxERBParser
   class Converter
     class << self
       def convert(structured)
+        structured = [structured] if structured.is_a?(Hash)
+
         structured.inject([]) do |result, hash|
           result << '' unless result.empty?
 

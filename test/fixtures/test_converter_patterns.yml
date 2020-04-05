@@ -65,3 +65,8 @@
     - set -g default-terminal tmux-256color
     - set -g prefix C-t
     - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""'
+
+## for test if root type is a Hash
+- before:
+    set: -g prefix C-t
+  after: set -g prefix C-t
