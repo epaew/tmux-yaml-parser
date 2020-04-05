@@ -35,8 +35,14 @@ module TmuxERBParser
 
       def convert_hash(hash, prefix = [])
         converted = hash.map do |key, value|
-          key = %('"') if key == '"'
-          convert_structured(value, [*prefix, key])
+          case key
+          when '"'
+            convert_structured(value, [*prefix, %('"')])
+          when /style/
+            convert_structured_style(value, [*prefix, key])
+          else
+            convert_structured(value, [*prefix, key])
+          end
         end
         converted.flatten
       end
@@ -50,6 +56,20 @@ module TmuxERBParser
         when Array then convert_array(item, prefix)
         when Hash then convert_hash(item, prefix)
         else convert_string(item, prefix)
+        end
+      end
+
+      def convert_structured_style(item, prefix = [])
+        case item
+        when Array
+          convert_string(item.join(','), prefix)
+        when Hash
+          convert_string(
+            item.map { |key, value| "#{key}=#{value}" }.join(','),
+            prefix
+          )
+        else
+          convert_string(item, prefix)
         end
       end
     end

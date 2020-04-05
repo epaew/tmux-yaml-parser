@@ -70,3 +70,32 @@
 - before:
     set: -g prefix C-t
   after: set -g prefix C-t
+
+## for test when hash key includes /style/
+- before:
+    - set:
+        -g:
+          pane-border-style: fg=colour238,bg=white
+  after: set -g pane-border-style fg=colour238,bg=white
+- before:
+    - set:
+        -g:
+          pane-border-style:
+            - fg=colour238
+            - bg=white
+  after: set -g pane-border-style fg=colour238,bg=white
+- before:
+    - set:
+        -g:
+          pane-border-style:
+            fg: colour238
+            bg: white
+  after: set -g pane-border-style fg=colour238,bg=white
+
+
+## for test `bind '"' ...`
+- before:
+    bind:
+      '"':
+        split-window: -vc "#{pane_current_path}"
+  after: bind '"' split-window -vc "#{pane_current_path}"
