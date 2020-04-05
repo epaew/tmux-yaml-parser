@@ -54,17 +54,31 @@
 
 ## for test array with hash key 'if-shell' conversion
 - before:
-  - set:
-      -g:
-        - default-terminal tmux-256color
-        - prefix C-t
-    if:
+    - if: "'test \"${REMOTEHOST}${SSH_CONNECTION}\"' 'set -g status-right \"\"'"
+  after:
+    - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""'
+- before:
+    - if:
       - 'test "${REMOTEHOST}${SSH_CONNECTION}"'
       - 'set -g status-right ""'
   after:
-    - set -g default-terminal tmux-256color
-    - set -g prefix C-t
     - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""'
+- before:
+    - if:
+      - 'test "${REMOTEHOST}${SSH_CONNECTION}"'
+      - set: -g status-right ""
+  after:
+    - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""'
+- before:
+    - if:
+      - 'test "${REMOTEHOST}${SSH_CONNECTION}"'
+      - set:
+          -g:
+            status-right:
+              - '""' # when `test` command returns true
+              - red  # when `test` command returns false
+  after:
+    - if 'test "${REMOTEHOST}${SSH_CONNECTION}"' 'set -g status-right ""' 'set -g status-right red'
 
 ## for test if root type is a Hash
 - before:

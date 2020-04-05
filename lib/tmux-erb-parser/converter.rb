@@ -18,26 +18,13 @@ module TmuxERBParser
 
       private
 
-      def convert_array(array, prefix = [])
-        case prefix.last
-        when 'if', 'if-shell', 'run', 'run-shell'
-          strings = array.map do |item|
-            converted = convert_structured(item, [])
-            converted = %('#{converted}') if converted.include?(' ')
-            converted
-          end
-
-          [*prefix, *strings].join(' ')
-        else
-          array.map { |item| convert_structured(item, prefix) }
-        end
-      end
-
       def convert_hash(hash, prefix = [])
         converted = hash.map do |key, value|
           case key
           when '"'
             convert_structured(value, [*prefix, %('"')])
+          when 'if', 'if-shell', 'run', 'run-shell'
+            convert_structured_shell(value, [*prefix, key])
           when /style/
             convert_structured_style(value, [*prefix, key])
           else
@@ -53,9 +40,26 @@ module TmuxERBParser
 
       def convert_structured(item, prefix = [])
         case item
-        when Array then convert_array(item, prefix)
-        when Hash then convert_hash(item, prefix)
-        else convert_string(item, prefix)
+        when Array
+          item.map { |i| convert_structured(i, prefix) }
+        when Hash
+          convert_hash(item, prefix)
+        else
+          convert_string(item, prefix)
+        end
+      end
+
+      def convert_structured_shell(item, prefix = [])
+        case item
+        when Array
+          args = item.map { |i| convert_structured(i, []) }
+          args = args.flatten.map do |arg|
+            arg.include?(' ') ? %('#{arg}') : arg
+          end
+
+          [*prefix, *args].join(' ')
+        else
+          convert_string(item, prefix)
         end
       end
 
