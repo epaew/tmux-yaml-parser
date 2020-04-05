@@ -37,7 +37,7 @@
     - set -g display-panes-time 10000
   strip_comment: true
 
-## for test type = yaml
+## for test type = json
 - before: |
     {
       "set": {
