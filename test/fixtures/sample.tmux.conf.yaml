@@ -64,13 +64,12 @@
   set:
     -g:
       status-left-length: 50
-      status-left: |
-        "#[bg=magenta] #h [s#S] {?client_prefix,#[reverse],} <<%= prefix_key %>> "
+      status-left: '"#[bg=magenta] #h [s#S] {?client_prefix,#[reverse],} <<%= prefix_key %>> "'
 
 - set:
     -g:
       - status-right-length 25
       - status-right "#[bg=cyan] %Y-%m-%d %H:%M:%S "
   if:
-    - 'test "${REMOTEHOST}${SSH_CONNECTION}"'
-    - 'set -g status-right ""'
+    - test "${REMOTEHOST}${SSH_CONNECTION}"
+    - set -g status-right ""
