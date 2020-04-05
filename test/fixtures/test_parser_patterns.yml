@@ -15,7 +15,7 @@
   after: ''
   strip_comment: true
 - before: 'bind C-t send-prefix # puts "C-t" twice, send "C-t"'
-  after: 'bind C-t send-prefix'
+  after: bind C-t send-prefix
   strip_comment: true
 - before: bind c new-window -c '#{pane_current_path}'
   after: bind c new-window -c '#{pane_current_path}'
@@ -23,6 +23,46 @@
 - before: bind c new-window -c "#{pane_current_path}"
   after: bind c new-window -c "#{pane_current_path}"
   strip_comment: true
+
+## for test blank line trimming
+- before: |
+    set -g default-terminal tmux-256color
+
+
+    set -g display-panes-time 10000
+
+  after:
+    - set -g default-terminal tmux-256color
+    - ""
+    - set -g display-panes-time 10000
+  strip_comment: true
+
+## for test type = yaml
+- before: |
+    {
+      "set": {
+        "-g": {
+          "default-terminal": "tmux-256color",
+          "display-panes-time": 10000
+        }
+      }
+    }
+  after:
+    - set -g default-terminal tmux-256color
+    - set -g display-panes-time 10000
+  type: json
+
+## for test type = yaml
+- before: |
+    - set:
+        -g:
+          default-terminal: tmux-256color
+          display-panes-time: 10000
+  after:
+    - set -g default-terminal tmux-256color
+    - set -g display-panes-time 10000
+  type: yaml
+
 # from "https://github.com/junegunn/dotfiles/blob/master/tmux.conf"
 - before:
     - 'if-shell "test $USER = jg" \'

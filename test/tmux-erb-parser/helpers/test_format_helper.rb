@@ -4,7 +4,7 @@ require 'test_helper'
 
 module TmuxERBParser
   module Helpers
-    class TestEnvironmentHelper < MyTestCase
+    class TestFormatHelper < MyTestCase
       def test_format_and
         assert_equal(helper.format_and('str1', 'str2'), "\#{&&:str1,str2}")
         assert_equal(helper.format_and('str1', 'str2', 'str3'),
