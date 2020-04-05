@@ -20,7 +20,9 @@ A Tmux plugin for loading tmux.conf written in Ruby (eRuby) notation.
 1. Create your `tmux.conf.erb` and place it.
     * By default, tmux-erb-parser loads all `*.erb` files in `~/.config/tmux/`
     * Or you can change the load path. (Please see below.)
-    * Sample configuration file: [sample.tmux.conf.erb](test/fixtures/sample.tmux.conf.erb)
+    * Sample configuration file:
+        * [sample.tmux.conf.erb](test/fixtures/sample.tmux.conf.erb)
+        * [sample.tmux.conf.yaml](test/fixtures/sample.tmux.conf.yaml)
 2. Install tmux-erb-parser and run tmux!
 
 ### Install with tpm (Tmux Plugin Manager)
